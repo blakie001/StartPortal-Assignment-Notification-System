@@ -3,22 +3,22 @@ const User = require("../models/User");
 
 
 const verifyToken = async(req, res, next) =>{
-    if(!req.header.authorization)
+    if(!req.headers.authorization)
     {
         return res.status(500).json("Unauthenticated")
     }
-    let token = req.header.authorization.split(" ")[1];
+    let token = req.headers.authorization.split(" ")[1];
     if(!token) throw new Error ("token not found");
 
     try
     {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const User = await User.findById(decoded?.id);
-        if(!User)
+        const user = await User.findById(decoded?.id);
+        if(!user)
         {
             return res.status(401).json("User Not Found");
         }
-        res.UserId = UserId;
+        res.userId = user._id;
         next();
     }
     catch(err)
